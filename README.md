@@ -46,3 +46,8 @@ export default App;
 
 Finally, make the `supabaseUrl` and `supabaseAnonKey` environment variables
 available via the `env` property of your Next.js config.
+
+## Tokens
+
+The authentication process will add an `access_token` cookie that can be used
+in any subsequent requests that require authentication.

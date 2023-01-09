@@ -35,10 +35,10 @@ Add the `authProvider` to your React Admin `App.tsx` component:
 ```tsx
 import { FC } from 'react';
 import { Admin } from 'react-admin';
-import { LoginPage, getAuthProvider } from '@jambff/ra-supabase-next-auth';
+import { LoginPage, authProvider } from '@jambff/ra-supabase-next-auth';
 
 const App: FC = () => (
-  <Admin authProvider={getAuthProvider()} loginPage={LoginPage} />
+  <Admin authProvider={authProvider} loginPage={LoginPage} />
 );
 
 export default App;

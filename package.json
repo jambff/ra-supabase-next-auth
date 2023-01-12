@@ -4,8 +4,12 @@
   "author": "Alex Mendes",
   "license": "MIT",
   "main": "dist/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build:cjs": "tsc --module commonjs --outDir dist",
+    "build:esm": "tsc --module esnext --outDir dist/esm",
+    "build": "yarn build:cjs && yarn build:esm",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx,.json .",
     "typecheck": "tsc --noEmit"
   },

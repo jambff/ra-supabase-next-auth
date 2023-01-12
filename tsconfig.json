@@ -4,7 +4,7 @@
     "outDir": "./dist",
     "target": "es5",
     "jsx": "react-jsx",
-    "module": "esnext",
+    "module": "commonjs",
     "declaration": true,
     "moduleResolution": "node",
     "noUnusedLocals": true,

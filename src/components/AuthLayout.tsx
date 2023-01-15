@@ -3,16 +3,16 @@ import { Login } from 'react-admin';
 
 type AuthLayoutProps = {
   children: ReactNode;
+  background?: string;
+  backgroundImage?: string;
 };
 
 export const AuthLayout: FC<AuthLayoutProps> = ({
   children,
+  background,
+  backgroundImage,
 }: AuthLayoutProps) => (
-  <Login
-    sx={{
-      backgroundImage:
-        'radial-gradient(circle farthest-corner at 0% 100%, #ff0090, #fd8624)',
-    }}>
+  <Login backgroundImage={backgroundImage} sx={{ background }}>
     {children}
   </Login>
 );

@@ -5,13 +5,17 @@ import { DynamicAuthForm } from './DynamicAuthForm';
 type LoginPageProps = {
   redirectTo?: string;
   className?: string;
+  background?: string;
+  backgroundImage?: string;
 };
 
 export const LoginPage: FC<LoginPageProps> = ({
   redirectTo,
   className,
+  background,
+  backgroundImage,
 }: LoginPageProps) => (
-  <AuthLayout>
+  <AuthLayout background={background} backgroundImage={backgroundImage}>
     <DynamicAuthForm redirectTo={redirectTo} className={className} />
   </AuthLayout>
 );

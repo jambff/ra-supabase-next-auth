@@ -32,13 +32,13 @@
   },
   "peerDependencies": {
     "@mui/material": "^5.0.0",
+    "@supabase/supabase-js": "^2.2.3",
     "next": "*",
     "react": "*",
     "react-admin": "^4.0.0",
     "react-dom": "*"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.2.3",
     "js-cookie": "^3.0.1",
     "qs": "^6.11.0"
   },

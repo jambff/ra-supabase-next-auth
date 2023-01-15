@@ -1,8 +1,7 @@
 import { FC, useCallback } from 'react';
 import { Button, Typography } from '@mui/material';
-import { TextInput, required, useNotify } from 'react-admin';
+import { TextInput, required, useNotify, useAuthProvider } from 'react-admin';
 import { AuthForm } from './AuthForm';
-import { getSupabaseClient } from '../supabase';
 import { AuthSecondaryButton } from './AuthSecondaryButton';
 import { AUTH_ROUTE } from '../constants';
 
@@ -16,11 +15,10 @@ export const ResetPasswordForm: FC<ResetPasswordFormProps> = ({
   showFeedback,
 }: ResetPasswordFormProps) => {
   const notify = useNotify();
+  const { supabase } = useAuthProvider();
 
   const onSubmit = useCallback(
     async ({ email }: Record<string, any>) => {
-      const supabase = getSupabaseClient();
-
       try {
         await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: new URL(AUTH_ROUTE, window.location.origin).href,
@@ -43,7 +41,7 @@ export const ResetPasswordForm: FC<ResetPasswordFormProps> = ({
         "If you're registered with us you'll receive an email with instructions on how to reset your password.",
       );
     },
-    [notify, showFeedback],
+    [notify, showFeedback, supabase],
   );
 
   return (

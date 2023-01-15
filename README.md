@@ -30,22 +30,29 @@ import type { NextPage } from 'next';
 export default AuthPage;
 ```
 
-Add the `authProvider` to your React Admin `App.tsx` component:
+Set the `authProvider` and `loginPage` in your React Admin `App.tsx` component, like so:
 
 ```tsx
 import { FC } from 'react';
 import { Admin } from 'react-admin';
-import { LoginPage, authProvider } from '@jambff/ra-supabase-next-auth';
+import { LoginPage, createAuthProvider } from '@jambff/ra-supabase-next-auth';
+
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+const authProvider = createAuthProvider(supabase);
 
 const App: FC = () => (
-  <Admin authProvider={authProvider} loginPage={LoginPage} />
+  <Admin
+    authProvider={authProvider}
+    loginPage={LoginPage}
+  >
+    <Resource
+      name="my-stuff"
+    />
+  </Admin>
 );
 
 export default App;
 ```
-
-Finally, make the `supabaseUrl` and `supabaseAnonKey` environment variables
-available via the `env` property of your Next.js config.
 
 ## Tokens
 

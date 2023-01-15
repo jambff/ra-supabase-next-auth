@@ -1,83 +1,76 @@
+import { SupabaseClient } from '@supabase/supabase-js';
 import Cookies from 'js-cookie';
 import { AuthProvider, UserIdentity } from 'react-admin';
 import { ACCESS_TOKEN_COOKIE_KEY, AUTH_TYPE_COOKIE_KEY } from './constants';
-import { getSupabaseClientIfExists } from './supabase';
 
-const supabase = getSupabaseClientIfExists();
+export const createAuthProvider = (supabase: SupabaseClient): AuthProvider => ({
+  supabase,
+  login: async ({ email, password }) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-if (!supabase) {
-  console.warn('Missing Supabase credentials - authentication disabled.');
-}
+    if (error) {
+      throw error;
+    }
 
-export const authProvider: AuthProvider | undefined = !supabase
-  ? undefined
-  : {
-      login: async ({ email, password }) => {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+    const { access_token: accessToken, refresh_token: refreshToken } =
+      data.session ?? {};
 
-        if (error) {
-          throw error;
-        }
+    if (!accessToken) {
+      throw new Error();
+    }
 
-        const { access_token: accessToken, refresh_token: refreshToken } =
-          data.session ?? {};
+    if (!refreshToken) {
+      throw new Error();
+    }
 
-        if (!accessToken) {
-          throw new Error();
-        }
+    Cookies.set(ACCESS_TOKEN_COOKIE_KEY, accessToken);
+  },
+  logout: async () => {
+    const { error } = await supabase.auth.signOut();
 
-        if (!refreshToken) {
-          throw new Error();
-        }
+    if (error) {
+      throw error;
+    }
 
-        Cookies.set(ACCESS_TOKEN_COOKIE_KEY, accessToken);
-      },
-      logout: async () => {
-        const { error } = await supabase.auth.signOut();
+    Cookies.remove(ACCESS_TOKEN_COOKIE_KEY);
+  },
+  checkError: async ({ status }) => {
+    if ([401, 403].includes(status)) {
+      throw new Error();
+    }
+  },
+  checkAuth: async () => {
+    // The user has been sent an invite or recovery link. Remove any stored
+    // access token to ultimately take them through the password reset flow.
+    if (Cookies.get(AUTH_TYPE_COOKIE_KEY)) {
+      Cookies.remove(ACCESS_TOKEN_COOKIE_KEY);
+    }
 
-        if (error) {
-          throw error;
-        }
+    if (!Cookies.get(ACCESS_TOKEN_COOKIE_KEY)) {
+      throw new Error();
+    }
+  },
+  getPermissions: async () => ['fake-role'],
+  getIdentity: async (): Promise<UserIdentity> => {
+    const {
+      data: { user },
+      error: getUserError,
+    } = await supabase.auth.getUser();
 
-        Cookies.remove(ACCESS_TOKEN_COOKIE_KEY);
-      },
-      checkError: async ({ status }) => {
-        if ([401, 403].includes(status)) {
-          throw new Error();
-        }
-      },
-      checkAuth: async () => {
-        // The user has been sent an invite or recovery link. Remove any stored
-        // access token to ultimately take them through the password reset flow.
-        if (Cookies.get(AUTH_TYPE_COOKIE_KEY)) {
-          Cookies.remove(ACCESS_TOKEN_COOKIE_KEY);
-        }
+    if (getUserError) {
+      throw getUserError;
+    }
 
-        if (!Cookies.get(ACCESS_TOKEN_COOKIE_KEY)) {
-          throw new Error();
-        }
-      },
-      getPermissions: async () => ['fake-role'],
-      getIdentity: async (): Promise<UserIdentity> => {
-        const {
-          data: { user },
-          error: getUserError,
-        } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error();
+    }
 
-        if (getUserError) {
-          throw getUserError;
-        }
-
-        if (!user) {
-          throw new Error();
-        }
-
-        return {
-          id: user.id,
-          fullName: user.email,
-        };
-      },
+    return {
+      id: user.id,
+      fullName: user.email,
     };
+  },
+});

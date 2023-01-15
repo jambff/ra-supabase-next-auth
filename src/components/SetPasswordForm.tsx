@@ -1,9 +1,14 @@
 import { FC, useCallback } from 'react';
 import { Button, Typography } from '@mui/material';
-import { required, useNotify, PasswordInput, useRedirect } from 'react-admin';
+import {
+  required,
+  useNotify,
+  PasswordInput,
+  useRedirect,
+  useAuthProvider,
+} from 'react-admin';
 import Cookies from 'js-cookie';
 import { AuthForm } from './AuthForm';
-import { getSupabaseClient } from '../supabase';
 import {
   ACCESS_TOKEN_COOKIE_KEY,
   AUTH_SESSION_COOKIE_KEY,
@@ -16,6 +21,7 @@ const CONFIRM_PASSWORD_NAME = 'confirmPassword';
 export const SetPasswordForm: FC = () => {
   const notify = useNotify();
   const redirect = useRedirect();
+  const { supabase } = useAuthProvider();
 
   const validate = (values: Record<string, string>) => {
     const errors: Record<string, string> = {};
@@ -62,7 +68,6 @@ export const SetPasswordForm: FC = () => {
 
   const onSubmit = useCallback(
     async ({ password }: Record<string, any>) => {
-      const supabase = getSupabaseClient();
       const newSession = Cookies.get(AUTH_SESSION_COOKIE_KEY);
 
       if (!newSession) {
@@ -116,7 +121,7 @@ export const SetPasswordForm: FC = () => {
       removeCookies();
       redirect('/');
     },
-    [redirect, handleError],
+    [redirect, handleError, supabase],
   );
 
   return (

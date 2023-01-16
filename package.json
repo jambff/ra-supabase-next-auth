@@ -40,7 +40,8 @@
   },
   "dependencies": {
     "js-cookie": "^3.0.1",
-    "qs": "^6.11.0"
+    "qs": "^6.11.0",
+    "unfetch": "^5.0.0"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^8.3.4",

@@ -1,8 +1,32 @@
-import fetch, { UnfetchRequestInit, UnfetchResponse } from 'unfetch';
+import fetch from 'unfetch';
 import Cookies from 'js-cookie';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 const ACCESS_TOKEN_COOKIE_KEY = 'access_token';
+
+type UnfetchRequestInit = {
+  method?: string;
+  headers?: Record<string, string>;
+  credentials?: 'include' | 'omit';
+  body?: Parameters<XMLHttpRequest['send']>[0];
+};
+
+type UnfetchResponse = {
+  ok: boolean;
+  statusText: string;
+  status: number;
+  url: string;
+  text: () => Promise<string>;
+  json: () => Promise<any>;
+  blob: () => Promise<Blob>;
+  clone: () => UnfetchResponse;
+  headers: {
+    keys: () => string[];
+    entries: () => Array<[string, string]>;
+    get: (key: string) => string | undefined;
+    has: (key: string) => boolean;
+  };
+};
 
 const getOptionsWithAuth = (options?: UnfetchRequestInit) => ({
   ...options,
@@ -48,7 +72,7 @@ export const createAuthenticatedFetch = (supabase: SupabaseClient) => {
   };
 
   const authenticatedFetch = async (
-    url: string | URL,
+    url: string,
     options?: UnfetchRequestInit,
     _retried?: boolean,
   ): Promise<UnfetchResponse> => {

@@ -8,7 +8,7 @@ export const createAuthProvider = (supabase: SupabaseClient): AuthProvider => {
     const { error } = await supabase.auth.signOut();
 
     if (error) {
-      throw error;
+      console.error(error);
     }
 
     Cookies.remove(ACCESS_TOKEN_COOKIE_KEY);
@@ -66,7 +66,8 @@ export const createAuthProvider = (supabase: SupabaseClient): AuthProvider => {
       } = await supabase.auth.getUser(token);
 
       if (getUserError || !user) {
-        logout();
+        await logout();
+        window.location.reload();
 
         throw getUserError;
       }

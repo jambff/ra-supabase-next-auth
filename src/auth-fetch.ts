@@ -28,13 +28,21 @@ type UnfetchResponse = {
   };
 };
 
-const getOptionsWithAuth = (options?: UnfetchRequestInit) => ({
-  ...options,
-  headers: {
-    ...options?.headers,
-    Authorization: `Bearer ${Cookies.get(ACCESS_TOKEN_COOKIE_KEY)}`,
-  },
-});
+const getOptionsWithAuth = (options?: UnfetchRequestInit) => {
+  const token = Cookies.get(ACCESS_TOKEN_COOKIE_KEY);
+
+  if (!token) {
+    return options;
+  }
+
+  return {
+    ...options,
+    headers: {
+      ...options?.headers,
+      Authorization: `Bearer ${token}`,
+    },
+  };
+};
 
 /**
  * If an API call fails attempt to refresh the session and retry.
@@ -53,7 +61,7 @@ export const createAuthenticatedFetch = (supabase: SupabaseClient) => {
     } = await supabase.auth.getSession();
 
     if (!currentSession) {
-      signOut();
+      await signOut();
 
       return;
     }
@@ -63,7 +71,7 @@ export const createAuthenticatedFetch = (supabase: SupabaseClient) => {
     } = await supabase.auth.setSession(currentSession);
 
     if (!newSession?.access_token) {
-      signOut();
+      await signOut();
 
       return;
     }

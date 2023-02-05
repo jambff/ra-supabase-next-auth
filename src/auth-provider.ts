@@ -106,7 +106,7 @@ export const createAuthProvider = (
         throw new Error();
       }
 
-      checkRole();
+      await checkRole();
     },
     getIdentity,
     getPermissions: async () => {

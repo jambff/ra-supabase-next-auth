@@ -83,10 +83,8 @@ into the user's identity object by passing in a `getIdentity()` function when
 creating the auth provider, for example:
 
 ```tsx
-import { FC } from 'react';
-import { Admin } from 'react-admin';
 import { createClient, User } from '@supabase/supabase-js';
-import { LoginPage, createAuthProvider } from '@jambff/ra-supabase-next-auth';
+import { createAuthProvider } from '@jambff/ra-supabase-next-auth';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 const authProvider = createAuthProvider(supabase, {
@@ -118,3 +116,20 @@ If the object you return from your custom `getIdentity()` function includes a
 `role` property the value of this property will be made available via React
 Admin's `usePermissions()` hook
 (see [Permissions](https://marmelab.com/react-admin/Permissions.html)).
+
+Additionally, if you pass in an `acceptedRoles` property when creating the
+auth provider only users with those roles will be allowed in, for example:
+
+```tsx
+import { createClient, User } from '@supabase/supabase-js';
+import { createAuthProvider } from '@jambff/ra-supabase-next-auth';
+
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+const authProvider = createAuthProvider(supabase, {
+  acceptedRoles: ['admin', 'editor'],
+  getIdentity: async (supabaseUser: User) => {
+    // Get real identity
+    return { role: 'admin' };
+  },
+});
+```

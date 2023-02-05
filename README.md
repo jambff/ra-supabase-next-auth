@@ -73,7 +73,7 @@ const res = await authenticatedFetch('http://api.com/example', { method: 'POST' 
 await res.json();
 ```
 
-## Profile data
+## Identity
 
 By default this library will create user identity objects with an `id` and
 `fullName`, which is populated with the user's email.
@@ -111,3 +111,10 @@ const authProvider = createAuthProvider(supabase, {
 
 The data you return will be attached to the `profile` attribute of the user's
 identity object.
+
+## Roles
+
+If the object you return from your custom `getIdentity()` function includes a
+`role` property the value of this property will be made available via React
+Admin's `usePermissions()` hook
+(see [Permissions](https://marmelab.com/react-admin/Permissions.html)).

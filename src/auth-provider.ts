@@ -94,6 +94,7 @@ export const createAuthProvider = (
         throw new Error('Unauthorized');
       }
     },
+    checkRole,
     checkAuth: async () => {
       // The user has been sent an invite or recovery link. Remove any stored
       // access token to ultimately take them through the password reset flow.

@@ -28,7 +28,7 @@ export const SetPasswordForm: FC<SetPasswordFormProps> = ({
 }: SetPasswordFormProps) => {
   const notify = useNotify();
   const redirect = useRedirect();
-  const { supabase } = useAuthProvider();
+  const { supabase, checkRole } = useAuthProvider();
 
   const validate = (values: Record<string, string>) => {
     const errors: Record<string, string> = {};
@@ -120,6 +120,12 @@ export const SetPasswordForm: FC<SetPasswordFormProps> = ({
         return;
       }
 
+      try {
+        await checkRole();
+      } catch (err) {
+        handleError(err);
+      }
+
       // If successfully updated set the access token for the new session.
       if (session?.access_token) {
         Cookies.set(ACCESS_TOKEN_COOKIE_KEY, session.access_token);
@@ -128,7 +134,7 @@ export const SetPasswordForm: FC<SetPasswordFormProps> = ({
       removeCookies();
       redirect('/');
     },
-    [redirect, handleError, supabase],
+    [redirect, handleError, supabase, checkRole],
   );
 
   const onBackClick = useCallback(() => {

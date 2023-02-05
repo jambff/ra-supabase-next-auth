@@ -5,6 +5,7 @@ import { ACCESS_TOKEN_COOKIE_KEY, AUTH_TYPE_COOKIE_KEY } from './constants';
 
 type CreateAuthProviderOptions = {
   getIdentity?: (supabaseUser: User) => Record<string, any>;
+  acceptedRoles?: string[];
 };
 
 export const createAuthProvider = (
@@ -36,6 +37,22 @@ export const createAuthProvider = (
     };
   };
 
+  const checkRole = async () => {
+    if (!options.acceptedRoles?.length) {
+      return;
+    }
+
+    const { role } = await getIdentity();
+
+    if (!options.acceptedRoles.includes(role)) {
+      throw new Error(
+        `Not an accepted role: ${role} (must be one of ${options.acceptedRoles.join(
+          ', ',
+        )})`,
+      );
+    }
+  };
+
   return {
     supabase,
     login: async ({ email, password }) => {
@@ -52,12 +69,14 @@ export const createAuthProvider = (
         data.session ?? {};
 
       if (!accessToken) {
-        throw new Error();
+        throw new Error('No access token present in the session data');
       }
 
       if (!refreshToken) {
-        throw new Error();
+        throw new Error('No refresh token present in the session data');
       }
+
+      await checkRole();
 
       Cookies.set(ACCESS_TOKEN_COOKIE_KEY, accessToken);
     },
@@ -85,6 +104,8 @@ export const createAuthProvider = (
       if (!Cookies.get(ACCESS_TOKEN_COOKIE_KEY)) {
         throw new Error();
       }
+
+      checkRole();
     },
     getIdentity,
     getPermissions: async () => {

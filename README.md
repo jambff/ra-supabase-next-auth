@@ -91,10 +91,12 @@ import { LoginPage, createAuthProvider } from '@jambff/ra-supabase-next-auth';
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 const authProvider = createAuthProvider(supabase, {
   getIdentity: async (supabaseUser: User) => {
-    const { data: { name, role } } = await supabase
-      .from('user')
+    const { data, error } = await supabase
+      .from('User')
       .select('name, role')
       .eq('guid', supabaseUser.id);
+
+    const { name, role } = data?.[0] ?? {};
 
     return {
       fullName: name ?? supabaseUser.email,

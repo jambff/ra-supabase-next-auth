@@ -124,6 +124,8 @@ export const SetPasswordForm: FC<SetPasswordFormProps> = ({
         await checkRole();
       } catch (err) {
         handleError(err);
+
+        return;
       }
 
       // If successfully updated set the access token for the new session.

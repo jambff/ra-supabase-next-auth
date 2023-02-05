@@ -14,11 +14,18 @@ import {
   AUTH_SESSION_COOKIE_KEY,
   AUTH_TYPE_COOKIE_KEY,
 } from '../constants';
+import { AuthSecondaryButton } from './AuthSecondaryButton';
+
+type SetPasswordFormProps = {
+  onBackToSignInClick: () => void;
+};
 
 const PASSWORD_NAME = 'password';
 const CONFIRM_PASSWORD_NAME = 'confirmPassword';
 
-export const SetPasswordForm: FC = () => {
+export const SetPasswordForm: FC<SetPasswordFormProps> = ({
+  onBackToSignInClick,
+}: SetPasswordFormProps) => {
   const notify = useNotify();
   const redirect = useRedirect();
   const { supabase } = useAuthProvider();
@@ -124,6 +131,11 @@ export const SetPasswordForm: FC = () => {
     [redirect, handleError, supabase],
   );
 
+  const onBackClick = useCallback(() => {
+    removeCookies();
+    onBackToSignInClick();
+  }, [onBackToSignInClick]);
+
   return (
     <AuthForm onSubmit={onSubmit} validate={validate}>
       <Typography paragraph align="center">
@@ -144,6 +156,7 @@ export const SetPasswordForm: FC = () => {
       <Button variant="contained" type="submit" color="primary" fullWidth>
         Sign in
       </Button>
+      <AuthSecondaryButton onClick={onBackClick}>Go back</AuthSecondaryButton>
     </AuthForm>
   );
 };

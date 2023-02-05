@@ -62,7 +62,7 @@ export const DynamicAuthForm: FC<DynamicAuthFormProps> = ({
   }
 
   if (displayedForm === 'set-password') {
-    return <SetPasswordForm />;
+    return <SetPasswordForm onBackToSignInClick={onBackToSignInClick} />;
   }
 
   if (displayedForm === 'reset-password') {

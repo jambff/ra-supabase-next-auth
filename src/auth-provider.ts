@@ -1,9 +1,16 @@
-import { SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseClient, User } from '@supabase/supabase-js';
 import Cookies from 'js-cookie';
 import { AuthProvider, UserIdentity } from 'react-admin';
 import { ACCESS_TOKEN_COOKIE_KEY, AUTH_TYPE_COOKIE_KEY } from './constants';
 
-export const createAuthProvider = (supabase: SupabaseClient): AuthProvider => ({
+type CreateAuthProviderOptions = {
+  getIdentity?: (supabaseUser: User) => Record<string, any>;
+};
+
+export const createAuthProvider = (
+  supabase: SupabaseClient,
+  options: CreateAuthProviderOptions = {},
+): AuthProvider => ({
   supabase,
   login: async ({ email, password }) => {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -64,6 +71,13 @@ export const createAuthProvider = (supabase: SupabaseClient): AuthProvider => ({
 
     if (getUserError || !user) {
       throw new Error('Failed to get identity.');
+    }
+
+    if (options.getIdentity) {
+      return {
+        ...(await options.getIdentity(user)),
+        id: user.id,
+      };
     }
 
     return {

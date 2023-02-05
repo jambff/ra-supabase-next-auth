@@ -72,3 +72,37 @@ const res = await authenticatedFetch('http://api.com/example', { method: 'POST' 
 
 await res.json();
 ```
+
+## Profile data
+
+By default this library will create user identity objects with an `id` and
+`fullName`, which is populated with the user's email.
+
+If you have additional user data in a separate Supabase table you can merge this
+into the user's identity object by passing in a `getIdentity()` function when
+creating the auth provider, for example:
+
+```tsx
+import { FC } from 'react';
+import { Admin } from 'react-admin';
+import { createClient, User } from '@supabase/supabase-js';
+import { LoginPage, createAuthProvider } from '@jambff/ra-supabase-next-auth';
+
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+const authProvider = createAuthProvider(supabase, {
+  getIdentity: async (supabaseUser: User) => {
+    const { data: { name, role } } = await supabase
+      .from('user')
+      .select('name, role')
+      .eq('guid', supabaseUser.id);
+
+    return {
+      fullName: name ?? supabaseUser.email,
+      role,
+    };
+  },
+});
+```
+
+The data you return will be attached to the `profile` attribute of the user's
+identity object.

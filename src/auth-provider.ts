@@ -46,9 +46,9 @@ export const createAuthProvider = (
 
     if (!options.acceptedRoles.includes(role)) {
       throw new Error(
-        `Not an accepted role: ${role} (must be one of ${options.acceptedRoles.join(
-          ', ',
-        )})`,
+        `Not an accepted role: ${role} (accepted role${
+          options.acceptedRoles.length === 1 ? '' : 's'
+        }: ${options.acceptedRoles.join(', ')})`,
       );
     }
   };

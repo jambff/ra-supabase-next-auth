@@ -97,9 +97,12 @@ const authProvider = createAuthProvider(supabase, {
       .eq('guid', supabaseUser.id);
 
     const { name, role } = data?.[0] ?? {};
+    const { id, email } = supabaseUser;
 
     return {
-      fullName: name ?? supabaseUser.email,
+      id,
+      fullName: name ?? email,
+      email,
       role,
     };
   },

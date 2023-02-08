@@ -1,6 +1,6 @@
 {
   "name": "@jambff/ra-supabase-next-auth",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "author": "Alex Mendes",
   "license": "MIT",
   "main": "dist/index.js",

@@ -12,7 +12,29 @@ export const createAuthProvider = (
   supabase: SupabaseClient,
   options: CreateAuthProviderOptions = {},
 ): AuthProvider => {
-  const getIdentity = async (): Promise<UserIdentity> => {
+  const refreshSession = async () => {
+    const {
+      data: { session: currentSession },
+    } = await supabase.auth.getSession();
+
+    if (!currentSession) {
+      console.error('Session expired');
+
+      throw new Error();
+    }
+
+    const {
+      data: { session: newSession },
+    } = await supabase.auth.setSession(currentSession);
+
+    if (!newSession) {
+      console.error('Failed to refresh session');
+
+      throw new Error();
+    }
+  };
+
+  const getIdentity = async (_retried?: boolean): Promise<UserIdentity> => {
     const token = Cookies.get(ACCESS_TOKEN_COOKIE_KEY);
 
     const {
@@ -21,7 +43,13 @@ export const createAuthProvider = (
     } = await supabase.auth.getUser(token);
 
     if (getUserError || !user) {
-      throw new Error('Failed to get identity.');
+      if (!_retried) {
+        await refreshSession();
+
+        return getIdentity(true);
+      }
+
+      throw new Error();
     }
 
     if (options.getIdentity) {

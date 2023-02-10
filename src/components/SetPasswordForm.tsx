@@ -9,11 +9,7 @@ import {
 } from 'react-admin';
 import Cookies from 'js-cookie';
 import { AuthForm } from './AuthForm';
-import {
-  ACCESS_TOKEN_COOKIE_KEY,
-  AUTH_SESSION_COOKIE_KEY,
-  AUTH_TYPE_COOKIE_KEY,
-} from '../constants';
+import { AUTH_SESSION_COOKIE_KEY, AUTH_TYPE_COOKIE_KEY } from '../constants';
 import { AuthSecondaryButton } from './AuthSecondaryButton';
 
 type SetPasswordFormProps = {
@@ -84,15 +80,11 @@ export const SetPasswordForm: FC<SetPasswordFormProps> = ({
       }
 
       let error;
-      let session;
 
       // Set the session data for the new session, based on the access_token
       // and refresh_token passed as part of the invite or recovery flow.
       try {
-        ({
-          error,
-          data: { session },
-        } = await supabase.auth.setSession(JSON.parse(newSession)));
+        ({ error } = await supabase.auth.setSession(JSON.parse(newSession)));
       } catch (err) {
         handleError(err);
 
@@ -126,11 +118,6 @@ export const SetPasswordForm: FC<SetPasswordFormProps> = ({
         handleError(err);
 
         return;
-      }
-
-      // If successfully updated set the access token for the new session.
-      if (session?.access_token) {
-        Cookies.set(ACCESS_TOKEN_COOKIE_KEY, session.access_token);
       }
 
       removeCookies();

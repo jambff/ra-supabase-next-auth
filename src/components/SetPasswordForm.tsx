@@ -134,7 +134,7 @@ export const SetPasswordForm: FC<SetPasswordFormProps> = ({
   return (
     <AuthForm onSubmit={onSubmit} validate={validate}>
       <Typography paragraph align="center">
-        Please set a password to accept the invitation and sign in.
+        Please set a password to sign in.
       </Typography>
       <PasswordInput
         fullWidth

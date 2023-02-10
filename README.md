@@ -55,23 +55,13 @@ const App: FC = () => (
 export default App;
 ```
 
-## Fetching
+## Authentication
 
 The authentication process will add an `access_token` cookie that can be used
 in any subsequent requests that require authentication.
 
-The library also exports a `createAuthenticatedFetch()` function that can be
-used from your data provider. It creates a `fetch()` implementation that appends
-the `Authorization` header to any requests and, if a request fails with a 401 or
-403 status code, refreshes the Supabase session before trying again.
-
-```ts
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
-const authenticatedFetch = createAuthenticatedFetch();
-const res = await authenticatedFetch('http://api.com/example', { method: 'POST' });
-
-await res.json();
-```
+The [`@jambff/supabase-auth-fetch`](https://github.com/jambff/supabase-auth-fetch)
+package can be used to generate a fetch client the uses this token.
 
 ## Identity
 

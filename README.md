@@ -25,9 +25,18 @@ Add a file to your Next.js pages folder at `pages/auth.ts` containing the follow
 
 ```ts
 import { AuthPage } from '@jambff/ra-supabase-next-auth';
-import type { NextPage } from 'next';
 
 export default AuthPage;
+```
+
+Or, if you are using a custom `basename` to serve your admin pages:
+
+```tsx
+import { AuthPage } from '@jambff/ra-supabase-next-auth';
+
+const Page = () => <AuthPage basename="/admin" />;
+
+export default Page;
 ```
 
 Set the `authProvider` and `loginPage` in your React Admin `App.tsx` component, like so:

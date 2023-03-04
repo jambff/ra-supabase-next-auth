@@ -7,7 +7,11 @@ import {
   AUTH_TYPE_COOKIE_KEY,
 } from '../constants';
 
-const handleAuth = async () => {
+type AuthPageProps = {
+  basename?: string;
+};
+
+const handleAuth = async (basename: string = '/') => {
   // Clear any cookies from previous requests.
   Cookies.remove(AUTH_TYPE_COOKIE_KEY);
   Cookies.remove(AUTH_ERROR_COOKIE_KEY);
@@ -50,13 +54,15 @@ const handleAuth = async () => {
     );
   }
 
-  window.location.assign(new URL('/', window.location.origin));
+  window.location.assign(new URL(basename, window.location.origin));
 };
 
-export const AuthPage: NextPage = () => {
+export const AuthPage: NextPage<AuthPageProps> = ({
+  basename,
+}: AuthPageProps) => {
   useEffect(() => {
-    handleAuth();
-  }, []);
+    handleAuth(basename);
+  }, [basename]);
 
   return null;
 };
